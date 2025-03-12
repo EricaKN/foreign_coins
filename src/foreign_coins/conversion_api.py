@@ -1,37 +1,54 @@
-#Importando as bibliotecas
 import requests
 import json
+import logging
+import argparse
 
-#Função para retornar apenas o valor da cotação
-def cotacao(escolha=1):
+logger = logging.getLogger(__name__)
 
-    #Escolha da moeda que se deseja buscar a cotação
-    if escolha == 1:
-        moeda = 'USDBRL'
-    elif escolha == 2:
-        moeda = 'EURBRL'
-    elif escolha == 3:
-        moeda = 'BTCBRL'
+def quotation(option=1):
+
+    # Choose which conversion you would like
+    if option == 1:
+        coin = 'EURBRL'
+    elif option == 2:
+        coin = 'USDBRL'
+    elif option == 3:
+        coin = 'BTCBRL'
     else:
-        return 'Moeda inválida!'
+        return 'Invalid option!'
 
 
-#Url da API
-    url = 'https://economia.awesomeapi.com.br/json/last/'+ moeda[0:3] +'-'+ moeda[3:6]
+# API's URL
+    url = 'https://economia.awesomeapi.com.br/json/last/'+ coin[0:3] +'-'+ coin[3:6]
 
 
-#Capturando a cotação
-    cotacao = requests.get(url).content
+# Request information
+    quotation = requests.get(url).content
 
+# Extract info
+    dic = json.loads(quotation)
 
-#Extraindo a cotação
-    dic = json.loads(cotacao)
+    return coin, dic[coin]
 
+def main():
+    parser = argparse.ArgumentParser(description='Currency quotation')
+    parser.add_argument('--option', type=int, required=True, help='Options: (1: EURBRL, 2: USDBRL, 3: BTCBRL)')
 
-#Exibindo os resultados em tela
-    return float(dic[moeda]["bid"])
+    args = parser.parse_args()
+    coin, result = quotation(args.option) 
+     
+    if isinstance(result, str): # check if there is an error message
+        print("error!")
+        print(result)
+    else:
+        date_hour = result["create_date"]
+        message = (f'{date_hour[8:10]}/{date_hour[5:7]}/{date_hour[0:4]} {date_hour[10:19]} - Preço atual ({coin}): {result["bid"]} Brazilians Reais\n')
+        with open("quotation_api.txt", "a") as file:
+            logging.basicConfig(filename='quotation_logs_api.log', level=logging.INFO)
+            logger.info('Started')
+            file.write(message)
+            logger.info("Quotation for %s successfully saved: %s", coin, message.strip())
+        print(message)
 
 if __name__ == '__main__':
-    # Exemplo: Escolhendo a cotação do USD para BRL (USDBRL)
-    resultado = cotacao(2)  # 1 para USDBRL, 2 para EURBRL, 3 para BTCBRL
-    print(f'Cotação: {resultado}')
+    main()

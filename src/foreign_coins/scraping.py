@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_price():
     url = 'https://www.xe.com/currencyconverter/convert/?Amount=1&From=EUR&To=BRL'  
@@ -16,11 +19,28 @@ def get_price():
         if price_tag:
             price = price_tag.text.strip()
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(f'{timestamp} - Preço atual: {price}')
+            message = f'{timestamp} - Preço atual (EURBRL): {price}\n'
         else:
-            print('Preço não encontrado!')
+            print('Price not found')
+            message = "Price not found"
     else:
-        print('Erro ao acessar a página.')
+        print('Error: page not found')
+        message = "Error: page not found"
+    return message
 
 if __name__ == '__main__':
     get_price()
+
+
+def main():
+    result = get_price() 
+
+    with open("quotation_scraping.txt", "a") as file:
+        logging.basicConfig(filename='quotation_logs_scraping.log', level=logging.INFO)
+        logger.info('Started')
+        file.write(result)
+        logger.info("Quotation for EURBRL successfully saved: %s", result.strip())
+    print(result)
+
+if __name__ == '__main__':
+    main()

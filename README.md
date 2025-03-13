@@ -5,24 +5,59 @@ The idea of the project is to have simple bot that will store the values of a gi
 
 ## CREATE AND ACTIVATE VENV
 python3 -m venv venv
+
+
 source venv/bin/activate
 
 ## INSTALL DEPENDECIES AT PYPROJECT.TOML
 poetry install
 
 # RUN SCRIPT
+## RUN CONVERSION API CODE
+poetry run api --option <1, 2 or 3>
+
+### HELP
+poetry run api --help
+
+
+poetry run api -h
+
 ## WEBSCRAPING CODE
 poetry run scraping 
 
 ### [TODO] Add another conversion options like <RUN CONVERSION API CODE>
 
-## RUN CONVERSION API CODE
-poetry run conversion_api --option <1, 2 or 3>
+# CRON SCHEDULING
+## LOCALLY
+### RUN THE COMMAND EVERY 1'
+Add a new task for your cron service. For that:
 
-### HELP
-poetry run conversion_api --help
-poetry run conversion_api -h
 
+1. Run the command: crontab -e 
+
+
+2. Add the following line:
+
+
+* * * * * cd /path/to/your/project/foreign_coins && . venv/bin/activate && poetry run api --option 1
+
+### CHECK CRON SERVICE
+To check if the cron service is running as expected, run the following command:
+
+
+systemctl status cron
+
+## ON LAST BASTION SERVER
+
+# REMOTE SERVER
+## ADD REMOTE SERVER AT /ETC/HOSTS
+<server_ip_address> <server-name>
+
+## ADD PUBLIC SSH-KEY AT AUTHORIZED_KEYS FILE
+Add my public ssh-key at /home/<user>>/.ssh/authorized_keys
+
+## ACCESS REMOTE SERVER
+ssh <user>@<server-name>
 # LITERATURE
 ## AWESOMEAPI
 On this code we use "AwesomeAPI", there is an important consideration about its use:
@@ -51,5 +86,3 @@ poetry run python3 <script.py>
 
 ### To update dependecies:
 poetry update requests
-
-"

@@ -39,15 +39,32 @@ Add a new task for your cron service. For that:
 2. Add the following line:
 
 
-* * * * * cd /path/to/your/project/foreign_coins && . venv/bin/activate && poetry run api --option 1
+"* * * * * cd /path/to/your/project/foreign_coins && . venv/bin/activate && poetry run api --option 1"
 
-### CHECK CRON SERVICE
+
+## ON REMOTE SERVER
+
+Add a new task for your cron service. For that:
+
+
+1. Access via ssh the remote server (check  "REMOTE SERVER" item)
+
+
+2. Run the command: crontab -e 
+
+
+3. Add the following line to run the command at 8am, 2pm and 8pm everyday:
+
+0 8,14,20 * * * cd /path/to/your/project/foreign_coins && . venv/bin/activate && poetry run api\
+ --option 1
+
+
+## CHECK CRON SERVICE
 To check if the cron service is running as expected, run the following command:
 
 
 systemctl status cron
 
-## ON LAST BASTION SERVER
 
 # REMOTE SERVER
 ## ADD REMOTE SERVER AT /ETC/HOSTS
@@ -58,6 +75,8 @@ Add my public ssh-key at /home/<user>>/.ssh/authorized_keys
 
 ## ACCESS REMOTE SERVER
 ssh <user>@<server-name>
+
+
 # LITERATURE
 ## AWESOMEAPI
 On this code we use "AwesomeAPI", there is an important consideration about its use:
